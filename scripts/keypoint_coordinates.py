@@ -1,10 +1,52 @@
 import cv2
+from pose_estimation.msg import Coordinate
 
 
 class KeypointCoordinates(object):
     
     def __init__(self, keypoint_names):
         self.keypoint_names = keypoint_names
+        self.forehead_pub = rospy.Publisher('forehead', Coordinate, queue_size=10)
+        self.hand_pub = rospy.Publisher('hand', Coordinate, queue_size=10)
+        self.chest_pub = rospy.Publisher('chest', Coordinate, queue_size=10)
+    
+    def __publish(self, keypoints):
+        msg = Coordinate()
+        msg.x = keypoints["forehead"][0]
+        msg.y = keypoints["forehead"][1]
+        self.forehead_pub.publish(msg)
+        msg.x = keypoints["hand"][0]
+        msg.y = keypoints["hand"][1]
+        self.hand_pub.publish(msg)
+        msg.x = keypoints["chest"][0]
+        msg.y = keypoints["chest"][1]
+        self.chest_pub.publish(msg)
+    
+    def __find_forehead(self, keypoints):
+        if "nose" in keypoints:
+            if "right_eye" in keypoints:
+                diff = (keypoints["nose"][1] - keypoints["right_eye"][1])
+                y = keypoints["right_eye"][1] - diff
+            elif "left_eye" in keypoints:
+                diff = keypoints["nose"][1] - keypoints["left_eye"][1]
+                y = keypoints["left_eye"][1] - diff
+            else:
+                print("Can't find forehead")
+                return
+            keypoints["forehead"] = [keypoints["nose"][0], y]
+        print("Can't find forehead")
+
+    def __find_chest(self, keypoints):
+        keypoints["chest"] = keypoints["neck"]
+
+    def __find_hand(self, keypoints):
+        targets = ["right_wrist", "left_wrist", "right_elbow", "left_elbow"]
+        for target in targets:
+            if target in keypoints:
+                keypoints["hand"] = keypoints[target]
+                return
+        print("Can't find hand")
+
         
     def __call__(self, image, object_counts, objects, normalized_peaks):
         keypoints = {}
@@ -25,4 +67,8 @@ class KeypointCoordinates(object):
                     cv2.circle(image, (x, y), 3, color, 2)
                     keypoints[self.keypoint_names[j]] = [x, y]
         
-        return keypoints
+        __find_chest()
+        __find_forehead()
+        __find_hand()
+        print(keypoints)
+        __publish()

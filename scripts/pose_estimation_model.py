@@ -54,8 +54,7 @@ class PoseEstimation(object):
         cmap, paf = self.model_trt(data)
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
         counts, objects, peaks = self.parse_objects(cmap, paf)
-        keypoints = self.keypoint_coordinates(image, counts, objects, peaks)
-        print(keypoints)
+        self.keypoint_coordinates(image, counts, objects, peaks)
         if self.display_widget:
             self.display_widget.value = bgr8_to_jpeg(image[:, ::-1, :])
 
