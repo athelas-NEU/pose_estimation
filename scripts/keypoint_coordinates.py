@@ -1,4 +1,6 @@
 import cv2
+import rospy
+
 from pose_estimation.msg import Coordinate
 
 

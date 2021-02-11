@@ -12,7 +12,7 @@ from jetcam.utils import bgr8_to_jpeg
 
 import time
 
-from keypoint_coordinates import KeypointCoordinates
+from scripts.keypoint_coordinates import KeypointCoordinates
 
 class PoseEstimation(object):
 
