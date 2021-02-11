@@ -16,10 +16,10 @@ from keypoint_coordinates import KeypointCoordinates
 
 class PoseEstimation(object):
 
-    OPTIMIZED_MODEL = 'optimized_models/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
+    OPTIMIZED_MODEL = 'data/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
     WIDTH = 224
     HEIGHT = 224
-    HUMAN_POSE = 'human_pose.json'
+    HUMAN_POSE = 'data/human_pose.json'
 
     def __init__(self, display_widget=None):
         self.display_widget = display_widget
