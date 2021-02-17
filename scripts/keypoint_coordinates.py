@@ -8,21 +8,6 @@ class KeypointCoordinates(object):
     
     def __init__(self, keypoint_names):
         self.keypoint_names = keypoint_names
-        self.forehead_pub = rospy.Publisher('forehead', Coordinate, queue_size=10)
-        self.hand_pub = rospy.Publisher('hand', Coordinate, queue_size=10)
-        self.chest_pub = rospy.Publisher('chest', Coordinate, queue_size=10)
-    
-    def __publish(self, keypoints):
-        msg = Coordinate()
-        msg.x = keypoints["forehead"][0]
-        msg.y = keypoints["forehead"][1]
-        self.forehead_pub.publish(msg)
-        msg.x = keypoints["hand"][0]
-        msg.y = keypoints["hand"][1]
-        self.hand_pub.publish(msg)
-        msg.x = keypoints["chest"][0]
-        msg.y = keypoints["chest"][1]
-        self.chest_pub.publish(msg)
     
     def __find_forehead(self, keypoints):
         if "nose" in keypoints:
@@ -72,5 +57,4 @@ class KeypointCoordinates(object):
         __find_chest()
         __find_forehead()
         __find_hand()
-        print(keypoints)
-        __publish()
+        return keypoints
