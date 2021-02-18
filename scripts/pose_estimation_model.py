@@ -6,6 +6,7 @@ import cv2
 import torchvision.transforms as transforms
 import PIL.Image
 from trt_pose.parse_objects import ParseObjects
+import matplotlib.pyplot as plt
 
 from jetcam.csi_camera import CSICamera
 from jetcam.utils import bgr8_to_jpeg
@@ -13,7 +14,7 @@ from jetcam.utils import bgr8_to_jpeg
 import time
 
 from scripts.keypoint_coordinates import KeypointCoordinates
-from main_node.srv import GetKeypoint, GetKeypointResponse
+# from main_node.srv import GetKeypoint, GetKeypointResponse
 
 
 class PoseEstimation(object):
@@ -41,12 +42,12 @@ class PoseEstimation(object):
         self.camera.running = True
 
         # ROS stuff
-        s = rospy.Service('get_keypoint', GetKeypoint, __handle_get_keypoint)
+        # s = rospy.Service('get_keypoint', GetKeypoint, __handle_get_keypoint)
 
-    def __handle_get_keypoint(req):
-        keypoints = self.capture()
-        coord = keypoints[req.location]
-        return GetKeypointResponse(coord[0], coord[1])
+    # def __handle_get_keypoint(req):
+    #     keypoints = self.capture()
+    #     coord = keypoints[req.location]
+    #     return GetKeypointResponse(coord[0], coord[1])
 
     def __preprocess(self, image):
         mean = torch.Tensor([0.485, 0.456, 0.406]).cuda()
@@ -64,9 +65,16 @@ class PoseEstimation(object):
         cmap, paf = self.model_trt(data)
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
         counts, objects, peaks = self.parse_objects(cmap, paf)
-        return self.keypoint_coordinates(image, counts, objects, peaks)
+        keypoints = self.keypoint_coordinates(image, counts, objects, peaks)
         if self.display_widget:
             self.display_widget.value = bgr8_to_jpeg(image[:, ::-1, :])
+        else:
+            print("imshowing")
+            plt.imshow(image[:, ::-1, :])
+            plt.show()
+            # cv2.imshow("image", image[:, ::-1, :])
+            # cv2.waitKey(1)
+        return keypoints
 
     def start_stream(self):
         self.camera.observe(self.__execute, names='value')
