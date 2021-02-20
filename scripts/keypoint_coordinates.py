@@ -32,14 +32,17 @@ class KeypointCoordinates(object):
         print("Cannot find chest")
 
     def __find_hand(self, keypoints, image):
-        targets = ["right_wrist", "left_wrist", "right_elbow", "left_elbow"]
+        color = (255, 0, 0)
+        targets = ["right_wrist", "left_wrist", "right_elbow", "left_elbow", "right_shoulder", "left_shoulder"]
         for target in targets:
             if target in keypoints:
-                keypoints["hand"] = keypoints[target]
-                color = (255, 0, 0)
+                if target in ["right_shoulder", "left_shoulder"]:
+                    keypoints["hand"] = [keypoints[target][0], 224]
+                else:
+                    keypoints["hand"] = keypoints[target]
                 cv2.circle(image, (keypoints["hand"][0], keypoints["hand"][1]), 3, color, 2)
                 return
-                
+        
         print("Can't find hand")
 
         
@@ -65,4 +68,8 @@ class KeypointCoordinates(object):
         self.__find_chest(keypoints, image)
         self.__find_forehead(keypoints, image)
         self.__find_hand(keypoints, image)
+
+        # Make (0, 0) the center
+        for name, coord in keypoints.items():
+            keypoints[name] = [coord[0] - 112, coord[1] - 112]
         return keypoints
