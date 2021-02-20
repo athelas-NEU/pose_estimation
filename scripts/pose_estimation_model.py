@@ -13,16 +13,17 @@ from jetcam.utils import bgr8_to_jpeg
 
 import time
 
-from scripts.keypoint_coordinates import KeypointCoordinates
-# from main_node.srv import GetKeypoint, GetKeypointResponse
+import rospy
+from keypoint_coordinates import KeypointCoordinates
+from main_node.srv import GetKeypoint, GetKeypointResponse
 
 
 class PoseEstimation(object):
 
-    OPTIMIZED_MODEL = 'data/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
+    OPTIMIZED_MODEL = '/home/athelas/catkin_ws/src/pose_estimation/data/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
     WIDTH = 224
     HEIGHT = 224
-    HUMAN_POSE = 'data/human_pose.json'
+    HUMAN_POSE = '/home/athelas/catkin_ws/src/pose_estimation/data/human_pose.json'
 
     def __init__(self, display_widget=None):
         self.display_widget = display_widget
@@ -42,12 +43,15 @@ class PoseEstimation(object):
         self.camera.running = True
 
         # ROS stuff
-        # s = rospy.Service('get_keypoint', GetKeypoint, __handle_get_keypoint)
+        s = rospy.Service('get_keypoint', GetKeypoint, self.__handle_get_keypoint)
 
-    # def __handle_get_keypoint(req):
-    #     keypoints = self.capture()
-    #     coord = keypoints[req.location]
-    #     return GetKeypointResponse(coord[0], coord[1])
+    def __handle_get_keypoint(self, req):
+        keypoints = self.capture()
+        if req.location in keypoints:
+            coord = keypoints[req.location]
+        else:
+            coord = [-999, -999]
+        return GetKeypointResponse(coord[0], coord[1])
 
     def __preprocess(self, image):
         mean = torch.Tensor([0.485, 0.456, 0.406]).cuda()
