@@ -76,8 +76,6 @@ class PoseEstimation(object):
             print("imshowing")
             plt.imshow(image[:, ::-1, :])
             plt.show()
-            # cv2.imshow("image", image[:, ::-1, :])
-            # cv2.waitKey(1)
         return keypoints
 
     def start_stream(self):

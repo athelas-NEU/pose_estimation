@@ -9,18 +9,22 @@ class KeypointCoordinates(object):
         if "nose" in keypoints:
             if "right_eye" in keypoints:
                 diff = (keypoints["nose"][1] - keypoints["right_eye"][1])
-                y = keypoints["right_eye"][1] - diff
+                y = max(keypoints["right_eye"][1] - diff, 0)
             elif "left_eye" in keypoints:
                 diff = keypoints["nose"][1] - keypoints["left_eye"][1]
-                y = keypoints["left_eye"][1] - diff
+                y = max(keypoints["left_eye"][1] - diff, 0)
             else:
-                print("Can't find forehead")
-                return
+                y = 0
             keypoints["forehead"] = [keypoints["nose"][0], y]
-            color = (255, 0, 0)
-            cv2.circle(image, (keypoints["nose"][0], y), 3, color, 2)
+        elif "neck" in keypoints:
+            keypoints["forehead"] = [keypoints["neck"][0], 0]
+        else:
+            print("Can't find forehead")
             return
-        print("Can't find forehead")
+        color = (255, 0, 0)
+        cv2.circle(image, (keypoints["forehead"][0], keypoints["forehead"][1]), 3, color, 2)
+        return
+        
 
     def __find_chest(self, keypoints, image):
         print("find chest")
