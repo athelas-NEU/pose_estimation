@@ -30,10 +30,17 @@ class KeypointCoordinates(object):
         print("find chest")
         if "neck" in keypoints:
             keypoints["chest"] = keypoints["neck"]
-            color = (255, 0, 0)
-            cv2.circle(image, (keypoints["chest"][0], keypoints["chest"][1]), 3, color, 2)
+        elif "nose" in keypoints:
+            keypoints["chest"] = [keypoints["nose"][0], 224]
+        elif "right_eye" in keypoints and "left_eye" in keypoints:
+            midpoint = (keypoints["right_eye"][0] - keypoints["left_eye"][0]) / 2
+            keypoints["chest"] = [int(midpoint), 224]
+        else:
+            print("Cannot find chest")
             return
-        print("Cannot find chest")
+        color = (255, 0, 0)
+        cv2.circle(image, (keypoints["chest"][0], keypoints["chest"][1]), 3, color, 2)
+            
 
     def __find_hand(self, keypoints, image):
         color = (255, 0, 0)
