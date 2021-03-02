@@ -41,6 +41,11 @@ class PoseEstimation(object):
 
         self.camera = CSICamera(width=self.WIDTH, height=self.HEIGHT, capture_fps=30)
         self.camera.running = True
+        
+        if self.display_widget is None:
+            self.display = plt.imshow(self.camera.value)
+            plt.ion()
+            plt.show()
 
         # ROS stuff
         s = rospy.Service('get_keypoint', GetKeypoint, self.__handle_get_keypoint)
@@ -73,9 +78,8 @@ class PoseEstimation(object):
         if self.display_widget:
             self.display_widget.value = bgr8_to_jpeg(image[:, ::-1, :])
         else:
-            print("imshowing")
-            plt.imshow(image[:, ::-1, :])
-            plt.show()
+            self.display.set_data(image[:, ::-1, :])
+            plt.pause(0.000001)
         return keypoints
 
     def start_stream(self):
