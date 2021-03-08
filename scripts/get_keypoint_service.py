@@ -4,8 +4,15 @@ import rospy
 
 from pose_estimation_model import PoseEstimation
 
+# To terminate all nodes:
+# rosnode kill -a
+
+def shutdown():
+  print("shutting down")
+
 def get_keypoint_server():
     rospy.init_node('get_keypoint_server')
+    rospy.on_shutdown(shutdown)
     p = PoseEstimation()
     print("Ready for locations.")
     rospy.spin()
