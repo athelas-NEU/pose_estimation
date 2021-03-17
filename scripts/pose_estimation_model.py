@@ -90,5 +90,8 @@ class PoseEstimation(object):
     
     def capture(self):
         return self.__execute({'new': self.camera.value})
+    
+    def terminate(self):
+        self.camera.close()
 
 

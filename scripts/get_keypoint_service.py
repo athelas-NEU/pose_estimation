@@ -8,14 +8,16 @@ from pose_estimation_model import PoseEstimation
 # rosnode kill -a
 
 def shutdown():
+  p.terminate()
   print("shutting down")
 
 def get_keypoint_server():
-    rospy.init_node('get_keypoint_server')
-    rospy.on_shutdown(shutdown)
-    p = PoseEstimation()
-    print("Ready for locations.")
-    rospy.spin()
+  rospy.init_node('get_keypoint_server')
+  rospy.on_shutdown(shutdown)
+  global p
+  p = PoseEstimation()
+  print("Ready for locations.")
+  rospy.spin()
 
 if __name__ == "__main__":
-    get_keypoint_server()
+  get_keypoint_server()
