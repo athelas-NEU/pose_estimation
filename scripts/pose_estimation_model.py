@@ -78,7 +78,7 @@ class PoseEstimation(object):
         if self.display_widget:
             self.display_widget.value = bgr8_to_jpeg(image[:, ::-1, :])
         else:
-            self.display.set_data(image[:, ::-1, :])
+            self.display.set_data(image[:,:,::-1])
             plt.pause(0.000001)
         return keypoints
 
