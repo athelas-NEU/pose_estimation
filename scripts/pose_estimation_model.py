@@ -20,10 +20,10 @@ from main_node.srv import GetKeypoint, GetKeypointResponse
 
 class PoseEstimation(object):
 
-    OPTIMIZED_MODEL = '/home/athelas/catkin_ws/src/pose_estimation/data/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
+    OPTIMIZED_MODEL = '/home/athelas/athelas_ws/src/pose_estimation/data/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'
     WIDTH = 224
     HEIGHT = 224
-    HUMAN_POSE = '/home/athelas/catkin_ws/src/pose_estimation/data/human_pose.json'
+    HUMAN_POSE = '/home/athelas/athelas_ws/src/pose_estimation/data/human_pose.json'
 
     def __init__(self, display_widget=None):
         self.display_widget = display_widget
