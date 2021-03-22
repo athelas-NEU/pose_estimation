@@ -16,6 +16,8 @@ import time
 import rospy
 from keypoint_coordinates import KeypointCoordinates
 from main_node.srv import GetKeypoint, GetKeypointResponse
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
 
 
 class PoseEstimation(object):
@@ -49,6 +51,8 @@ class PoseEstimation(object):
 
         # ROS stuff
         s = rospy.Service('get_keypoint', GetKeypoint, self.__handle_get_keypoint)
+        self.image_pub = rospy.Publisher("image", Image)
+        self.bridge = CvBridge()
 
     def __handle_get_keypoint(self, req):
         keypoints = self.capture()
@@ -75,6 +79,7 @@ class PoseEstimation(object):
         cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
         counts, objects, peaks = self.parse_objects(cmap, paf)
         keypoints = self.keypoint_coordinates(image, counts, objects, peaks)
+        self.image_pub.publish(self.bridge.cv2_to_imgmsg(image, "bgr8"))
         if self.display_widget:
             self.display_widget.value = bgr8_to_jpeg(image[:, ::-1, :])
         else:
