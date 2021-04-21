@@ -53,7 +53,7 @@ class KeypointCoordinates(object):
         others = ["chest", "right_eye", "left_eye", "nose"]
         for target in others:
             if target in keypoints:
-                keypoints["hand"] = [0, 224]
+                keypoints["hand"] = [keypoints[target][0], 224]
                 cv2.circle(image, (keypoints["hand"][0], keypoints["hand"][1]), 3, color, 2)
                 return
         
