@@ -4,8 +4,8 @@ Pose estimation using the [trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) 
 
 ## Setup
 ```
-cd ~/catkin_ws/src
-git clone https://github.com/athelas-NEU/main_node.git
+cd ~/athelas_ws/src
+git clone https://github.com/athelas-NEU/pose_estimation.git
 cd ..
 catkin_make
 ```
